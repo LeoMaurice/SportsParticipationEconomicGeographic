@@ -3,8 +3,10 @@
 1. Collecter sur le site des fédérations les coordonnées des clubs amateurs.
     - [Base de données de l’enquête nationale sur les pratiques physiques et sportives (ENPPS) de l’INJEP](https://www.data.gouv.fr/fr/datasets/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports/), disponible sur data.gouv.fr, donne par sport et par ville le nombre de clubs et de licenciés. Attention encoding des fichiers en cp1250 !
     - [Base de données permanentes des équipements sportifs](https://equipements.sports.gouv.fr/api/v2/console), disponible par une [API ODSQL](https://help.opendatasoft.com/apis/ods-explore-v2/#section/Opendatasoft-Query-Language-(ODSQL)/Language-elements) permet d’avoir les coordonnées
-    - [Base filosofi](https://www.insee.fr/fr/metadonnees/source/serie/s1172), données soci-économiques disponibles par API ou pynsee
-2. Clean les données et premières visualisation (par exemple emplacements des équipements sportifs)
+    - [Base filosofi](https://www.insee.fr/fr/metadonnees/source/serie/s1172), données soci-économiques et la base [2019](https://www.insee.fr/fr/statistiques/6036907) disponibles par API ou pynsee. [Documentations sur les bases de données locales INSEE](https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=DonneesLocales&version=V0.1&provider=insee#!/default/getDonnees)
+        - [Code géo](https://www.insee.fr/fr/information/3720946), [API Fichiers locaux](https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=DonneesLocales&version=V0.1&provider=insee#!/default/getDonnees), [version visuelle](https://www.insee.fr/fr/statistiques/6037462?geo=DEP-75)
+2. Clean les données et premières visualisation (par exemple emplacements des 
+équipements sportifs)
 3. Modélisation : économétrique pas suffisante, machine learning. Que faire ?
     
 ## Critiques
