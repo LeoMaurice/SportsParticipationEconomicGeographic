@@ -10,5 +10,6 @@
 ## Critiques
 1. Données
     - On n’a qu’une pratique « officielle », marquée par la licence : on peut rater d’autres pratiques moins formelles  
-    - Si on se limite à regarder des données commune par commune ou département par département : on crée des barrière imaginaire => besoin d’avoir des distances.
-    - Quid du ML ?   
+    - Si on se limite à regarder des données commune par commune ou département par département : on crée des barrière imaginaire => besoin d’avoir des distances => voir si RDD: peut être une opportunité
+    - Quid du ML ? 
+    - On est réduits à télécharger les données sur le site de l'Insee sans utiliser l'API car il est encore pas suffisament opérationnel pour être utile dans le cadre du projet  
