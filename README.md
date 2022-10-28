@@ -20,4 +20,5 @@
 
 - supprimer les outre mer mais garder la corse (donc supprimer pour les codes geo sup ou égaux à 97)
 - harmoniser le nom de toutes les variables correspondant au code commune insee et dénomer cette variable "CODGEO" par cohérence avec les codes pour les cartes ensuite
+- merger les 3 bases socio-économiques (Filosofi, taux de chomage et populations légales) à partir de la variable nouvellement nommée CODGEO
 - traiter les NaN?
