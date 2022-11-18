@@ -37,7 +37,7 @@ def cog_2021():
     # cog_commune = pynsee.download.telechargerDonnees("COG_COMMUNE", date = "dernier")
     
     # téléchargement direct
-    URL_COG_2021="https://www.insee.fr/fr/statistiques/fichier/5057840/commune2021-csv.zip"
+    URL_COG_2021 = "https://www.insee.fr/fr/statistiques/fichier/5057840/commune2021-csv.zip"
 
     #Télécharger le zip de l'URL
     r=requests.get(URL_COG_2021)
@@ -48,12 +48,12 @@ def cog_2021():
     with ZipFile("commune2021-csv.zip",'r') as myzip:
         data = myzip.open("commune2021.csv")
 
-    donnees_cog_2021=pd.read_csv(data,dtype=str)
+    donnees_cog_2021 = pd.read_csv(data,dtype=str)
     # On enleve les communes associées,arrondissements et déléguées pour simplifier le dataframe
-    donnees_cog_2021=donnees_cog_2021[~donnees_cog_2021.TYPECOM.isin(["COMA","COMD","ARM"])]
-    donnees_cog_2021['NCC et DEP']= donnees_cog_2021['NCC'] + " " + donnees_cog_2021['DEP']
-    donnees_cog_2021['NCC et COM']= donnees_cog_2021['NCC'] + " ," + donnees_cog_2021['COM']
-    return donnes_cog_2021
+    donnees_cog_2021 = donnees_cog_2021[~donnees_cog_2021.TYPECOM.isin(["COMA","COMD","ARM"])]
+    donnees_cog_2021['NCC et DEP'] = donnees_cog_2021['NCC'] + " " + donnees_cog_2021['DEP']
+    donnees_cog_2021['NCC et COM'] = donnees_cog_2021['NCC'] + " ," + donnees_cog_2021['COM']
+    return donnees_cog_2021
 
 
 def filosofi_2019():
@@ -114,13 +114,16 @@ def pop_2019():
     
 def data_chomage():
     """ Téléchargement des données de chomage directement depuis l'observatoire des territoires
-    La fonction retourne un dataframe des données de chomage par commune de 2019"""
+    La fonction retourne un dataframe des données de chomage par commune de 2018"""
     
     # téléchargement
     
+    
     URL_TAUX_CHOMAGE_15_24_PAR_COM="https://www.observatoire-des-territoires.gouv.fr/outils/cartographie-interactive/api/v1/functions/GC_API_download.php?type=stat&nivgeo=com2021&dataset=indic_sex_rp&indic=tx_chom1524"
-    donnees_chomage_15_24_par_com = pd.read_excel(URL_TAUX_CHOMAGE_15_24_PAR_COM, sheet_name='Data',skiprows=4)
-    donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com[donnees_chomage_15_24_par_com["an"]==2019]
+
+    donnees_chomage_15_24_par_com=pd.read_excel(URL_TAUX_CHOMAGE_15_24_PAR_COM, sheet_name='Data',skiprows=4)
+    
+    donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com[donnees_chomage_15_24_par_com["an"]==2018]
     donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com_travail[donnees_chomage_15_24_par_com_travail["sexe"]=="T"]
     donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com_travail.set_index("codgeo")
     

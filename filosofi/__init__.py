@@ -1,4 +1,4 @@
-from .filosofi import Filosofi
+from .filosofi import *
 
 # Importation des librairies classiques de python
 import unicodedata
