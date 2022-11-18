@@ -1,4 +1,12 @@
 from .filosofi import *
+from .sport import *
+
+# library carte
+
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import plotly.express as px
+from IPython.core.display import display, HTML
 
 # Importation des librairies classiques de python
 import unicodedata

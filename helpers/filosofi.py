@@ -4,6 +4,14 @@ réalisation : Charlotte Combier, Guilhem Sirot
 """
 
 #Imports
+
+# library carte
+
+import matplotlib.pyplot as plt
+import geopandas as gpd
+import plotly.express as px
+from IPython.core.display import display, HTML
+
 # Importation des librairies classiques de python
 import unicodedata
 import requests
@@ -153,7 +161,7 @@ def showgraph(geometries,df,geometries_idf,df_idf,var,color,label):
     geometries.plot(color='gray', ax=ax)
     df.plot(column=var, 
                         cmap=color, 
-                        linewidth=0.5, 
+                        linewidth=0.1, 
                         edgecolor='black',
                         ax=ax, 
                         legend=True,
@@ -196,11 +204,11 @@ def gpd_communes():
     communes = communes.loc[communes["dep"] <=95]
     return communes
 
-def carte_communes_france_idf(geometries,df, var,color,label):
+def carte_communes_france_idf(geometries, df, var,color,label):
     # on crée une base pour var par faciliter
-    df_var = df[var].to_frame()
-    df_var.index.name = ['CODGEO'] 
     
+    df_var = df[var]
+
     # on crée un df avec les données de var et les geometries
     carto_var=geometries.merge(df_var, how='left', on='CODGEO')
     carto_var.sort_values(by=['CODGEO'])
@@ -213,5 +221,8 @@ def carte_communes_france_idf(geometries,df, var,color,label):
     
     # création des geometries_idf et carto_var_idf
     carto_var_idf = carto_var.loc[carto_var['CODGEO'].str.slice(0, 2).isin(['75','77','78','91','92','93','94','95'])]
+
+    geometries_idf = geometries.loc[geometries['dep'].isin([75,77,78,91,92,93,94,95])]
+
     
     showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
