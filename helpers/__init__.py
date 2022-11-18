@@ -1,3 +1,4 @@
+print("import helpers")
 from .filosofi import *
 from .sport import *
 
