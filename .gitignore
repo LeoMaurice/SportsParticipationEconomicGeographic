@@ -1,3 +1,14 @@
+*.html
+*.pdf
+*.csv
+*.tsv
+*.json
+*.xml
+*.shp
+*.xls
+*.xlsx
+*.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -127,3 +138,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+liste_licence.csv
+
+# pytype static type analyzer
+.pytype/
