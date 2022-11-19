@@ -11,8 +11,8 @@ def licence_club():
     url_club = 'https://static.data.gouv.fr/resources/donnees-geocodees-issues-du-recensement-des-licences-et-clubs-aupres-des-federations-sportives-agreees-par-le-ministere-charge-des-sports/20220519-175014/clubs-data-2019.csv'
     file_club = url_club.split('/')[-1]
 
-    licence = pd.read_csv(url_licence, header = 0, encoding = 'cp1250', sep=';')
-    club = pd.read_csv(url_club, header = 0, encoding = 'cp1250', sep=';')
+    licence = pd.read_csv(url_licence, header = 0, encoding = 'cp1250', sep=';', low_memory=False)
+    club = pd.read_csv(url_club, header = 0, encoding = 'cp1250', sep=';', low_memory=False)
     return licence, club
 
 def test_encoding(file):
