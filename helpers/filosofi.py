@@ -30,6 +30,8 @@ from pynsee.sirene import *
 from pynsee.utils.init_conn import init_conn
 from zipfile import ZipFile
 from fuzzywuzzy import fuzz
+import cartiflette.s3
+from cartiflette.download import get_vectorfile_ign
 
 #Scrapping
 
@@ -187,22 +189,62 @@ def gpd_communes():
     Récupération du polygone des communes
     """
     # Récupération de tous le fichier sur data.gouv
-    url_com = 'https://www.data.gouv.fr/fr/datasets/r/61b8f19d-66ce-4ad3-a9c4-82502dc9d550'
-    communes = gpd.read_file(url_com)
-    #on ne veut que l'identifiant et la geometry
-    communes = communes[["insee", "geometry"]]
-    communes.columns = ["CODGEO", "geometry"]
-    communes.set_index('CODGEO')
+    # ancienne version
+    #url_com = 'https://www.data.gouv.fr/fr/datasets/r/61b8f19d-66ce-4ad3-a9c4-82502dc9d550'
+    #communes = gpd.read_file(url_com)
+
+    communes = france = get_vectorfile_ign(
+    level = "COMMUNE",
+    field = "metropole",
+    year = 2021)
+    #source = "COG_EXPRESS",
+    #provider="IGN")
+
+    #projection
+    communes = communes.to_crs(3857)
+
+    #on ne veut que l'identifiant, le département et la geometry
+    #communes = communes[["insee", "geometry"]] quand téléchargement via data.gouv
+    communes = communes[["INSEE_COM","INSEE_DEP", "geometry"]]
+    communes.columns = ["CODGEO","dep", "geometry"]
+    communes.set_index('CODGEO', drop = False)
+
+    arrondissements = cartiflette.s3.download_vectorfile_url_all(
+        values = "75",
+        level="ARRONDISSEMENT_MUNICIPAL",
+        vectorfile_format="geojson",
+        decoupage="departement",
+        year=2022)
+
+    arrondissements = arrondissements.to_crs(3857)
+
+    arrondissements = arrondissements[["INSEE_ARM","INSEE_DEP", "geometry"]]
+    arrondissements.columns = ["CODGEO","dep", "geometry"]
+    arrondissements.set_index('CODGEO', drop = False)
     
-    # récupération du code départemental
-    communes['dep'] = communes['CODGEO'].str[:2]
+    #division de paris en ces arrondissements
+    communes = pd.concat(
+    [
+        communes[communes['dep'] != "75"],
+        arrondissements
+    ])
+    
+    # récupération du code départemental, méthode pour les données de data.gouv
+    #communes['dep'] = communes['CODGEO'].str[:2]
+
+    #mise en numérique de la corse
     communes['dep'] = communes['dep'].replace({'2A': 20})
     communes['dep'] = communes['dep'].replace({'2B': 20})
     communes['dep']  = pd.to_numeric(communes['dep'])
     
     # restriction à ma France métropolitaine
-    communes = communes.loc[communes["dep"] <=95]
+    communes = communes.loc[communes["dep"] <=95] #normalement c'est déjà le cas avec cartiflette mais redondance
+
+    
+
+    #projection
     return communes
+
 
 def carte_communes_france_idf(geometries, df, var,color,label):
     # on crée une base pour var par faciliter
@@ -213,10 +255,7 @@ def carte_communes_france_idf(geometries, df, var,color,label):
     carto_var=geometries.merge(df_var, how='left', on='CODGEO')
     carto_var.sort_values(by=['CODGEO'])
     #normalement les bases sont déjà filtrés à la France métropolitaine, mais par sécurité 
-    carto_var['dep'] = carto_var['CODGEO'].str[:2]
-    carto_var['dep'] = carto_var['dep'].replace({'2A': 20})
-    carto_var['dep'] = carto_var['dep'].replace({'2B': 20})
-    carto_var['dep']  = pd.to_numeric(carto_var['dep'])
+    carto_var = ajout_dep(carto_var, 'CODGEO','dep')
     carto_var = carto_var.loc[carto_var["dep"] <=95]
     
     # création des geometries_idf et carto_var_idf
@@ -226,3 +265,33 @@ def carte_communes_france_idf(geometries, df, var,color,label):
 
     
     showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
+
+def carte_france_idf(geometries, df, var,color,label):
+    # on crée une base pour var par faciliter
+    
+    df_var = df[var]
+
+    # on crée un df avec les données de var et les geometries
+    carto_var=geometries.merge(df_var, how='left', on='CODGEO')
+    carto_var.sort_values(by=['CODGEO'])
+    #normalement les bases sont déjà filtrés à la France métropolitaine, mais par sécurité 
+    carto_var = ajout_dep(carto_var, 'CODGEO','dep')
+    carto_var = carto_var.loc[carto_var["dep"] <=95]
+    
+    # création des geometries_idf et carto_var_idf
+    carto_var_idf = carto_var.loc[carto_var['CODGEO'].str.slice(0, 2).isin(['75','77','78','91','92','93','94','95'])]
+
+    geometries_idf = geometries.loc[geometries['dep'].isin([75,77,78,91,92,93,94,95])]
+
+    
+    showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
+
+
+def ajout_dep(df, codgeo, dep):
+    df[dep] = df[codgeo].str[:2]
+    df[dep] = df[dep].replace({'2A': 20})
+    df[dep] = df[dep].replace({'2B': 20})
+    df[dep]  = pd.to_numeric(df[dep])
+    return df
+def ajout_paris_agrege(df, codgeo, dep):
+    df[df[dep]==75]
