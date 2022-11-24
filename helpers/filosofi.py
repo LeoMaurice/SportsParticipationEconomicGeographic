@@ -230,15 +230,15 @@ def gpd_communes():
     ])
     
     # récupération du code départemental, méthode pour les données de data.gouv
-    #communes['dep'] = communes['CODGEO'].str[:2]
+    #communes['DEP'] = communes['CODGEO'].str[:2]
 
     #mise en numérique de la corse
-    communes['dep'] = communes['dep'].replace({'2A': 20})
-    communes['dep'] = communes['dep'].replace({'2B': 20})
-    communes['dep']  = pd.to_numeric(communes['dep'])
+    communes['DEP'] = communes['DEP'].replace({'2A': 20})
+    communes['DEP'] = communes['DEP'].replace({'2B': 20})
+    communes['DEP']  = pd.to_numeric(communes['DEP'])
     
     # restriction à ma France métropolitaine
-    communes = communes.loc[communes["dep"] <=95] #normalement c'est déjà le cas avec cartiflette mais redondance
+    communes = communes.loc[communes["DEP"] <=95] #normalement c'est déjà le cas avec cartiflette mais redondance
 
     
 
@@ -255,13 +255,13 @@ def carte_communes_france_idf(geometries, df, var,color,label):
     carto_var=geometries.merge(df_var, how='left', on='CODGEO')
     carto_var.sort_values(by=['CODGEO'])
     #normalement les bases sont déjà filtrés à la France métropolitaine, mais par sécurité 
-    carto_var = ajout_dep(carto_var, 'CODGEO','dep')
-    carto_var = carto_var.loc[carto_var["dep"] <=95]
+    carto_var = ajout_dep(carto_var, 'CODGEO','DEP')
+    carto_var = carto_var.loc[carto_var["DEP"] <=95]
     
     # création des geometries_idf et carto_var_idf
     carto_var_idf = carto_var.loc[carto_var['CODGEO'].str.slice(0, 2).isin(['75','77','78','91','92','93','94','95'])]
 
-    geometries_idf = geometries.loc[geometries['dep'].isin([75,77,78,91,92,93,94,95])]
+    geometries_idf = geometries.loc[geometries['DEP'].isin([75,77,78,91,92,93,94,95])]
 
     
     showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
@@ -275,13 +275,13 @@ def carte_france_idf(geometries, df, var,color,label):
     carto_var=geometries.merge(df_var, how='left', on='CODGEO')
     carto_var.sort_values(by=['CODGEO'])
     #normalement les bases sont déjà filtrés à la France métropolitaine, mais par sécurité 
-    carto_var = ajout_dep(carto_var, 'CODGEO','dep')
-    carto_var = carto_var.loc[carto_var["dep"] <=95]
+    carto_var = ajout_dep(carto_var, 'CODGEO','DEP')
+    carto_var = carto_var.loc[carto_var["DEP"] <=95]
     
     # création des geometries_idf et carto_var_idf
     carto_var_idf = carto_var.loc[carto_var['CODGEO'].str.slice(0, 2).isin(['75','77','78','91','92','93','94','95'])]
 
-    geometries_idf = geometries.loc[geometries['dep'].isin([75,77,78,91,92,93,94,95])]
+    geometries_idf = geometries.loc[geometries['DEP'].isin([75,77,78,91,92,93,94,95])]
 
     
     showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
