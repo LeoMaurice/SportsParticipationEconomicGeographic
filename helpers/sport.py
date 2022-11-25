@@ -53,3 +53,34 @@ def get_es(url):
     #dpe = dpe.dropna(subset = ['longitude', 'latitude'])
 
     return df
+
+def compte_commune_equip(equipements):
+    # liste des familles
+    familles = equipements['famille'].unique()
+
+    #on crée une base par code geographique avec le total des infrastructures par commune
+    base_equip_commune = equipements.groupby(['CODGEO']).count()
+    base_equip_commune.rename(columns={'commune':"total"}, inplace = True)
+    base_equip_commune.dropna(inplace= True)
+    base_equip_commune = base_equip_commune[['total']]
+
+    # on vient compléter cette base du total des infrastructures
+    # selon des critères d'accessibilité :
+    critere_info = ["accesibilite_handicap", 'acces_libre']
+    for info in critere_info:
+        equipements[info].replace({'true':1,'false':0}, inplace = True) # on remplace les strings
+    # equivalent à des bools par leurs indicatrices pour sommer
+        base_equip_commune[info] = equipements.groupby(['CODGEO']).sum()[info]
+
+    # puis on vient ajouter pour chaque famille d'équipement le nombre
+    # en mettant 0 pour les villes n'en possédant pas
+    temp = equipements.groupby(['famille','CODGEO']).count()   
+    for fam in familles :
+        base_equip_commune[fam] = temp.loc[fam]['commune']
+    # pour la matrice CODGEO X famille, quand une famille est manquante
+    # on obtiens un NaN, qu'on remplace par 0 car la traduction est ici l'absence de la famille
+    base_equip_commune.fillna(0, inplace = True) 
+
+    base_equip_commune = base_equip_commune.astype(dtype=int)
+
+    return base_equip_commune
