@@ -165,8 +165,10 @@ def carte_france_idf(geometries, df, var,color,label):
 
 
 def ajout_dep(df, codgeo, dep):
+    print("entrée ajout dep")
     df[dep] = df[codgeo].str[:2]
     df[dep] = df[dep].replace({'2A': 20})
     df[dep] = df[dep].replace({'2B': 20})
     df[dep]  = pd.to_numeric(df[dep])
+    print("avant sortie ajout dep")
     return df
