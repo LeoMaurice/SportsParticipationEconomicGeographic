@@ -30,6 +30,8 @@ from pynsee.sirene import *
 from pynsee.utils.init_conn import init_conn
 from zipfile import ZipFile
 from fuzzywuzzy import fuzz
+import cartiflette.s3
+from cartiflette.download import get_vectorfile_ign
 
 #Scrapping
 
@@ -115,7 +117,7 @@ def pop_2019():
     
     donnees_pop_leg_19["CODE_INSEE"]=donnees_pop_leg_19["CODDEP"]+donnees_pop_leg_19["CODCOM"]
     donnees_pop_leg_19=donnees_pop_leg_19.set_index("CODE_INSEE")
-    donnees_pop_leg_19 = donnees_pop_leg_19.assign(codgeo = donnees_pop_leg_19['CODDEP'] + donnees_pop_leg_19['CODCOM'])
+    donnees_pop_leg_19 = donnees_pop_leg_19.assign(CODGEO = donnees_pop_leg_19['CODDEP'] + donnees_pop_leg_19['CODCOM'])
     donnees_pop_leg_19['PTOT'] = donnees_pop_leg_19['PTOT'].astype({'PTOT':float})
     
     return donnees_pop_leg_19
@@ -133,9 +135,49 @@ def data_chomage():
     
     donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com[donnees_chomage_15_24_par_com["an"]==2018]
     donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com_travail[donnees_chomage_15_24_par_com_travail["sexe"]=="T"]
-    donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com_travail.set_index("codgeo")
+    donnees_chomage_15_24_par_com_travail.rename(
+        columns = {'codgeo':'CODGEO'}, inplace = True)
+    donnees_chomage_15_24_par_com_travail = donnees_chomage_15_24_par_com_travail.set_index("CODGEO")
+
     
     return donnees_chomage_15_24_par_com_travail
+
+def data_demandeurs_emploi():
+    # url d'origine :
+    # https://www.insee.fr/fr/statistiques/fichier/6473526/DEFM2021_iris.xlsx
+    # https://www.insee.fr/fr/statistiques/6473526
+    # permet d'avoir des données sur Paris et ses arrondissements, même si les demandeurs d'emploi ABC
+    # ne sont pas exactement les chômeurs au sens du BIT
+    # données en COG 2021
+    """url_demandeurs_emploi = "https://www.insee.fr/fr/statistiques/fichier/6473526/DEFM2021_iris.xlsx"
+
+    de_com = pd.read_excel(url_demandeurs_emploi, sheet_name='COM_2021', skiprows=5)
+
+    de_com = de_com[['CODGEO', 'ABCDE','ABC']] #on pourrait venir en récupérer plus notamment les différences hommes femmes
+    de_com.set_index("CODGEO", inplace=True, drop=True)"""
+
+    url_demandeurs_emploi = "https://dares.travail-emploi.gouv.fr/sites/default/files/f49f1d0d9c5393de6efbf46b7be050c1/Dares_donnees-communales_demandeurs-demploi_2021.xlsx"
+
+    de_com = pd.read_excel(url_demandeurs_emploi,
+        sheet_name='ABC', skiprows=11)
+    """de_com.rename(columns=['REG','LIBREG','DEP',
+        'LIBDEP','CODGEO','communes',
+        '2012','2013','2014',',2015','2016','2017','2018','2019',
+        '2020','2021'])"""
+    de_com.rename(columns={"Unnamed: 4":"CODGEO","Unnamed: 2":"DEP",2018:"de_ABC_2018"}, inplace=True)
+    #le quatrimère trimestre 2018, on pourrait utilisé aussi le 4ème trimestre 2019
+
+    #il faudrait faire le passage CODGEO2022 à CODGEO2021
+    de_com['de_ABC_2018'].replace({'45*':45,'290*':290},
+        inplace=True) # la donnée de la ville de Sannerville et Troarn
+        # est entaché d'erreur, mais cela est minime
+    de_com = de_com.astype({'de_ABC_2018':int})
+    de_com.set_index("CODGEO", inplace=True)
+    de_com = de_com[["de_ABC_2018"]]
+
+    #on prend seulement la france métropolinaine
+
+    return de_com
 
 
 def trouve_commune_with_fuzz(donnees_cog_2021,libelle,dep):
@@ -143,86 +185,3 @@ def trouve_commune_with_fuzz(donnees_cog_2021,libelle,dep):
     mondf['score']=mondf['NCC'].apply(lambda x: fuzz.token_sort_ratio(x,libelle))
     mondf=mondf.sort_values(by="score",ascending=False)
     return mondf['NCC et COM'].iloc[0]
-
-#Cleaning
-
-#Visualisation
-
-def asciiprint(variable,desc):
-    print("-"*100)
-    print(variable,":",desc)
-    print("-"*100)
-
-def showgraph(geometries,df,geometries_idf,df_idf,var,color,label):
-    """ A compléter """
-    asciiprint(var,label)
-    fig, ax = plt.subplots(figsize=(10,10))
-
-    geometries.plot(color='gray', ax=ax)
-    df.plot(column=var, 
-                        cmap=color, 
-                        linewidth=0.1, 
-                        edgecolor='black',
-                        ax=ax, 
-                        legend=True,
-                        legend_kwds={'label': label, 'orientation': "horizontal"})
-    ax.set_axis_off()
-    
-    fig, ax = plt.subplots(figsize=(10,10))
-
-    geometries_idf.plot(color='gray', ax=ax)
-    df_idf.plot(column=var, 
-                        cmap=color, 
-                        linewidth=0.5, 
-                        edgecolor='black',
-                        ax=ax, 
-                        legend=True,
-                        legend_kwds={'label': label, 'orientation': "horizontal"})
-    ax.set_axis_off()
-    
-# Récupération des données des communes
-
-def gpd_communes():
-    """
-    Récupération du polygone des communes
-    """
-    # Récupération de tous le fichier sur data.gouv
-    url_com = 'https://www.data.gouv.fr/fr/datasets/r/61b8f19d-66ce-4ad3-a9c4-82502dc9d550'
-    communes = gpd.read_file(url_com)
-    #on ne veut que l'identifiant et la geometry
-    communes = communes[["insee", "geometry"]]
-    communes.columns = ["CODGEO", "geometry"]
-    communes.set_index('CODGEO')
-    
-    # récupération du code départemental
-    communes['dep'] = communes['CODGEO'].str[:2]
-    communes['dep'] = communes['dep'].replace({'2A': 20})
-    communes['dep'] = communes['dep'].replace({'2B': 20})
-    communes['dep']  = pd.to_numeric(communes['dep'])
-    
-    # restriction à ma France métropolitaine
-    communes = communes.loc[communes["dep"] <=95]
-    return communes
-
-def carte_communes_france_idf(geometries, df, var,color,label):
-    # on crée une base pour var par faciliter
-    
-    df_var = df[var]
-
-    # on crée un df avec les données de var et les geometries
-    carto_var=geometries.merge(df_var, how='left', on='CODGEO')
-    carto_var.sort_values(by=['CODGEO'])
-    #normalement les bases sont déjà filtrés à la France métropolitaine, mais par sécurité 
-    carto_var['dep'] = carto_var['CODGEO'].str[:2]
-    carto_var['dep'] = carto_var['dep'].replace({'2A': 20})
-    carto_var['dep'] = carto_var['dep'].replace({'2B': 20})
-    carto_var['dep']  = pd.to_numeric(carto_var['dep'])
-    carto_var = carto_var.loc[carto_var["dep"] <=95]
-    
-    # création des geometries_idf et carto_var_idf
-    carto_var_idf = carto_var.loc[carto_var['CODGEO'].str.slice(0, 2).isin(['75','77','78','91','92','93','94','95'])]
-
-    geometries_idf = geometries.loc[geometries['dep'].isin([75,77,78,91,92,93,94,95])]
-
-    
-    showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
