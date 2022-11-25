@@ -149,12 +149,33 @@ def data_demandeurs_emploi():
     # permet d'avoir des données sur Paris et ses arrondissements, même si les demandeurs d'emploi ABC
     # ne sont pas exactement les chômeurs au sens du BIT
     # données en COG 2021
-    url_demandeurs_emploi = "https://www.insee.fr/fr/statistiques/fichier/6473526/DEFM2021_iris.xlsx"
+    """url_demandeurs_emploi = "https://www.insee.fr/fr/statistiques/fichier/6473526/DEFM2021_iris.xlsx"
 
     de_com = pd.read_excel(url_demandeurs_emploi, sheet_name='COM_2021', skiprows=5)
 
     de_com = de_com[['CODGEO', 'ABCDE','ABC']] #on pourrait venir en récupérer plus notamment les différences hommes femmes
-    de_com.set_index("CODGEO", inplace=True, drop=True)
+    de_com.set_index("CODGEO", inplace=True, drop=True)"""
+
+    url_demandeurs_emploi = "https://dares.travail-emploi.gouv.fr/sites/default/files/f49f1d0d9c5393de6efbf46b7be050c1/Dares_donnees-communales_demandeurs-demploi_2021.xlsx"
+
+    de_com = pd.read_excel(url_demandeurs_emploi,
+        sheet_name='ABC', skiprows=11)
+    """de_com.rename(columns=['REG','LIBREG','DEP',
+        'LIBDEP','CODGEO','communes',
+        '2012','2013','2014',',2015','2016','2017','2018','2019',
+        '2020','2021'])"""
+    de_com.rename(columns={"Unnamed: 4":"CODGEO","Unnamed: 2":"DEP",2018:"de_ABC_2018"}, inplace=True)
+    #le quatrimère trimestre 2018, on pourrait utilisé aussi le 4ème trimestre 2019
+
+    #il faudrait faire le passage CODGEO2022 à CODGEO2021
+    de_com['de_ABC_2018'].replace({'45*':45,'290*':290},
+        inplace=True) # la donnée de la ville de Sannerville et Troarn
+        # est entaché d'erreur, mais cela est minime
+    de_com = de_com.astype({'de_ABC_2018':int})
+    de_com.set_index("CODGEO", inplace=True)
+    de_com = de_com[["de_ABC_2018"]]
+
+    #on prend seulement la france métropolinaine
 
     return de_com
 

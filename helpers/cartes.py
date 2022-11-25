@@ -38,6 +38,7 @@ def showgraph(geometries,df,geometries_idf,df_idf,var,color,label):
     fig, ax = plt.subplots(figsize=(10,10))
 
     geometries.plot(color='gray', ax=ax)
+
     df.plot(column=var, 
                         cmap=color, 
                         linewidth=0.1, 
