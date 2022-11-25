@@ -142,6 +142,22 @@ def data_chomage():
     
     return donnees_chomage_15_24_par_com_travail
 
+def data_demandeurs_emploi():
+    # url d'origine :
+    # https://www.insee.fr/fr/statistiques/fichier/6473526/DEFM2021_iris.xlsx
+    # https://www.insee.fr/fr/statistiques/6473526
+    # permet d'avoir des données sur Paris et ses arrondissements, même si les demandeurs d'emploi ABC
+    # ne sont pas exactement les chômeurs au sens du BIT
+    # données en COG 2021
+    url_demandeurs_emploi = "https://www.insee.fr/fr/statistiques/fichier/6473526/DEFM2021_iris.xlsx"
+
+    de_com = pd.read_excel(url_demandeurs_emploi, sheet_name='COM_2021', skiprows=5)
+
+    de_com = de_com[['CODGEO', 'ABCDE','ABC']] #on pourrait venir en récupérer plus notamment les différences hommes femmes
+    de_com.set_index("CODGEO", inplace=True, drop=True)
+
+    return de_com
+
 
 def trouve_commune_with_fuzz(donnees_cog_2021,libelle,dep):
     mondf=donnees_cog_2021[donnees_cog_2021['DEP']==dep]
