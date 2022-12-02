@@ -1,6 +1,7 @@
 # library carte
 
 import matplotlib.pyplot as plt
+import matplotlib
 import geopandas as gpd
 import plotly.express as px
 from IPython.core.display import display, HTML
@@ -32,33 +33,61 @@ def asciiprint(variable,desc):
     print(variable,":",desc)
     print("-"*100)
 
-def showgraph(geometries,df,geometries_idf,df_idf,var,color,label):
+def showgraph(geometries,df,geometries_idf,df_idf,var,color,label,islog):
     """ A compléter """
     asciiprint(var,label)
     fig, ax = plt.subplots(figsize=(10,10))
+    if not islog:
+        geometries.plot(color='gray', ax=ax)
 
-    geometries.plot(color='gray', ax=ax)
+        df.plot(column=var, 
+                            cmap=color, 
+                            linewidth=0.1, 
+                            edgecolor='black',
+                            ax=ax, 
+                            legend=True,
+                            legend_kwds={'label': label, 'orientation': "horizontal"},
+                            )
+        ax.set_axis_off()
+        
+        fig, ax = plt.subplots(figsize=(10,10))
 
-    df.plot(column=var, 
-                        cmap=color, 
-                        linewidth=0.1, 
-                        edgecolor='black',
-                        ax=ax, 
-                        legend=True,
-                        legend_kwds={'label': label, 'orientation': "horizontal"})
-    ax.set_axis_off()
-    
-    fig, ax = plt.subplots(figsize=(10,10))
+        geometries_idf.plot(color='gray', ax=ax)
+        df_idf.plot(column=var, 
+                            cmap=color, 
+                            linewidth=0.5, 
+                            edgecolor='black',
+                            ax=ax, 
+                            legend=True,
+                            legend_kwds={'label': label, 'orientation': "horizontal"}
+                            )
+        ax.set_axis_off()
+    else:
+        geometries.plot(color='gray', ax=ax)
 
-    geometries_idf.plot(color='gray', ax=ax)
-    df_idf.plot(column=var, 
-                        cmap=color, 
-                        linewidth=0.5, 
-                        edgecolor='black',
-                        ax=ax, 
-                        legend=True,
-                        legend_kwds={'label': label, 'orientation': "horizontal"})
-    ax.set_axis_off()
+        df.plot(column=var, 
+                            cmap=color, 
+                            linewidth=0.1, 
+                            edgecolor='black',
+                            ax=ax, 
+                            legend=True,
+                            legend_kwds={'label': label, 'orientation': "horizontal"},
+                            norm=matplotlib.colors.LogNorm(vmin=df[var].min(), vmax=df[var].max())
+                            )
+        ax.set_axis_off()
+        
+        fig, ax = plt.subplots(figsize=(10,10))
+
+        geometries_idf.plot(color='gray', ax=ax)
+        df_idf.plot(column=var, 
+                            cmap=color, 
+                            linewidth=0.5, 
+                            edgecolor='black',
+                            ax=ax, 
+                            legend=True,
+                            legend_kwds={'label': label, 'orientation': "horizontal"},
+                            norm=matplotlib.colors.LogNorm(vmin=df_idf[var].min(), vmax=df_idf[var].max()))
+        ax.set_axis_off()
     
 # Récupération des données des communes
 
@@ -124,11 +153,16 @@ def gpd_communes():
     return communes
 
 
-def carte_communes_france_idf(geometries, df, var,color,label):
+def carte_communes_france_idf(geometries, df, var,color,label, islog=False):
     # on crée une base pour var par faciliter
-    
-    df_var = df[var]
-
+    if 'CODGEO' in df.keys() and df.index.name!='CODGEO':
+        df_var = df[['CODGEO',var]]
+        df_var.reset_index()
+    else:
+        df_var = df[[var]]
+    if islog :
+        df_var = df_var[df_var[var]>=1] #élimine juste 5 communes pour la population totale
+        #df_var[var] = np.log10(df_var[var]) 
     # on crée un df avec les données de var et les geometries
     carto_var=geometries.merge(df_var, how='left', on='CODGEO')
     carto_var.sort_values(by=['CODGEO'])
@@ -142,7 +176,7 @@ def carte_communes_france_idf(geometries, df, var,color,label):
     geometries_idf = geometries.loc[geometries['DEP'].isin([75,77,78,91,92,93,94,95])]
 
     
-    showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label)
+    showgraph(geometries,carto_var,geometries_idf,carto_var_idf,var,color,label,islog)
 
 def carte_france_idf(geometries, df, var,color,label):
     # on crée une base pour var par faciliter
