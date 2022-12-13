@@ -17,7 +17,7 @@ Administrateurs stagiaires ayant travaillé sur le projet :
 
 Le dossiers helpers qui contient 3 petits fichiers .py de fonctions d'aides pour ne pas encombrer le jupyter rendu. Ce dernier contient l'ensemble des actions du téléchargement, à la visualisation des données jusqu'à leur modélisation et les interprétations.
 
-On a rajouté un fichier requirements.txt en cas de doute sur les besoins en package si le jupyter lui même n'installe pas ce qu'il faut (normalement un bloc installation à été prévu).
+On a rajouté un fichier requirements.txt en cas de doute sur les besoins en package si le jupyter lui même n'installe pas ce qu'il faut (normalement un bloc installation a été prévu, il ne s'exécute que si on fait : installations_needed = True).
 
 Le lancement total de rendu est de : 20 mn dont les 3/4 dans le téléchargement et la création de cartes pour visualiser les données. Si on veut juste les données et les modèles on peut utiliser au tout début VERBOSE = False pour ne pas avoir de graphiques ni de sortie.
 
@@ -34,5 +34,5 @@ Par commodité on a supprimé l'essentiel de l'aléa sur le clustering pour faci
     
 ## Pré-critiques
 - On n’a qu’une pratique « officielle », marquée par la licence : on peut rater d’autres pratiques moins formelles  
-- On regarde les données communes par communes ce qui créé des barrières imaginaire
+- On regarde les données communes par communes ce qui créé des barrières imaginaire : une pratique sportive peut-être multi communes.
 - On se limite exprès à l'urbain avec les villes moyennes.
