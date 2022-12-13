@@ -167,7 +167,7 @@ def data_demandeurs_emploi():
     de_com.rename(columns={"Unnamed: 4":"CODGEO","Unnamed: 2":"DEP",2018:"de_ABC_2018"}, inplace=True)
     #le quatrimère trimestre 2018, on pourrait utilisé aussi le 4ème trimestre 2019
 
-    #il faudrait faire le passage CODGEO2022 à CODGEO2021
+    #potentiellement passage de CODGEO2022 à CODGEO2021
     de_com['de_ABC_2018'].replace({'45*':45,'290*':290},
         inplace=True) # la donnée de la ville de Sannerville et Troarn
         # est entaché d'erreur, mais cela est minime
