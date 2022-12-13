@@ -20,6 +20,9 @@ def test_encoding(file):
     Les fichiers issues de l'enquête sportive sont dans un encoding unusuel.
     On met en place une fonction pour tester tous les encoding
     Cependant il y a besoin d'un contrôle visuel car certains encodings peuvent ouvrir mais en comprenant mal certains caractères typiques du français
+    
+    A priori pour executer le code on a pas besoin de cette fonction mais permet d'expliquer comment
+    on a trouvé cp1250
     """
     codecs = ['cp1250','ascii','big5','big5hkscs','cp037','cp273','cp424','cp437','cp500','cp720','cp737','cp775','cp850','cp852','cp855',
           'cp856','cp857','cp858','cp860','cp861','cp862','cp863','cp864','cp865','cp866','cp869','cp874','cp875','cp932','cp949',
@@ -49,9 +52,6 @@ def get_es(url):
     #print(wb)
     df = pd.json_normalize(wb)
 
-    #dpe = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude), crs = 4326)
-    #dpe = dpe.dropna(subset = ['longitude', 'latitude'])
-
     return df
 
 def compte_commune_equip(equipements):
@@ -60,17 +60,20 @@ def compte_commune_equip(equipements):
 
     #on crée une base par code geographique avec le total des infrastructures par commune
     base_equip_commune = equipements.groupby(['CODGEO']).count()
-    base_equip_commune.rename(columns={'commune':"total"}, inplace = True)
+    # on regroupe par communes
+    base_equip_commune.rename(columns={'commune':"total"}, inplace = True) #commune correspond au total
     base_equip_commune.dropna(inplace= True)
     base_equip_commune = base_equip_commune[['total']]
-
     # on vient compléter cette base du total des infrastructures
-    # selon des critères d'accessibilité :
+
+    # On ajout le nombre d'infrastructure par commune selon des critères d'accessibilité :
     critere_info = ["accesibilite_handicap", 'acces_libre']
     for info in critere_info:
         equipements[info].replace({'true':1,'false':0}, inplace = True) # on remplace les strings
     # equivalent à des bools par leurs indicatrices pour sommer
         base_equip_commune[info] = equipements.groupby(['CODGEO']).sum()[info]
+        # la somme nous donne le total de équipements accessibles par commune selon les différents
+        # critères d'accessibilités
 
     # puis on vient ajouter pour chaque famille d'équipement le nombre
     # en mettant 0 pour les villes n'en possédant pas
@@ -78,7 +81,7 @@ def compte_commune_equip(equipements):
     for fam in familles :
         base_equip_commune[fam] = temp.loc[fam]['commune']
     # pour la matrice CODGEO X famille, quand une famille est manquante
-    # on obtiens un NaN, qu'on remplace par 0 car la traduction est ici l'absence de la famille
+    # on obtiens un NaN, qu'on remplace par 0 car la traduction est ici l'absence de la famille dans la commune
     base_equip_commune.fillna(0, inplace = True) 
 
     base_equip_commune = base_equip_commune.astype(dtype=int)

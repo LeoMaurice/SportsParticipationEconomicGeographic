@@ -95,11 +95,17 @@ def gpd_communes():
     """
     Récupération du polygone des communes
     """
+    # 2 versions ont étés programmées : 
+    # La première :
     # Récupération de tous le fichier sur data.gouv
     # ancienne version
-    #url_com = 'https://www.data.gouv.fr/fr/datasets/r/61b8f19d-66ce-4ad3-a9c4-82502dc9d550'
-    #communes = gpd.read_file(url_com)
+    # url_com = 'https://www.data.gouv.fr/fr/datasets/r/61b8f19d-66ce-4ad3-a9c4-82502dc9d550'
+    # communes = gpd.read_file(url_com)
+    # on a décidé de ne plus utilisé cette méthode, mais il est facile d'y revenir
+    # en cas de problème sur cartiflette
 
+    # récupération des polygons des communes des données IGN EXPRESS à travers
+    # le package cartiflette
     communes = france = get_vectorfile_ign(
     level = "COMMUNE",
     field = "metropole",
@@ -132,8 +138,8 @@ def gpd_communes():
     #division de paris en ces arrondissements
     communes = pd.concat(
     [
-        communes[communes['DEP'] != "75"],
-        arrondissements
+        communes[communes['DEP'] != "75"], #exclusion de Paris
+        arrondissements # ajout des arrondissements
     ])
     
     # récupération du code départemental, méthode pour les données de data.gouv
