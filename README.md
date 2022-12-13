@@ -11,7 +11,7 @@ Administrateurs stagiaires ayant travaillé sur le projet :
 - [Base de données permanentes des équipements sportifs](https://equipements.sports.gouv.fr/api/v2/console), disponible par une [API ODSQL](https://help.opendatasoft.com/apis/ods-explore-v2/#section/Opendatasoft-Query-Language-(ODSQL)/Language-elements) permet d’avoir les coordonnées
 - [Base filosofi](https://www.insee.fr/fr/metadonnees/source/serie/s1172), données soci-économiques et la base [2019](https://www.insee.fr/fr/statistiques/6036907) disponibles par API ou pynsee. [Documentations sur les bases de données locales INSEE](https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=DonneesLocales&version=V0.1&provider=insee#!/default/getDonnees)
 - [Code géo](https://www.insee.fr/fr/information/3720946), [API Fichiers locaux](https://api.insee.fr/catalogue/site/themes/wso2/subthemes/insee/pages/item-info.jag?name=DonneesLocales&version=V0.1&provider=insee#!/default/getDonnees), [version visuelle](https://www.insee.fr/fr/statistiques/6037462?geo=DEP-75)
-- Données de chômage et des demandeurs d'emplois (DARES)
+- [Données de demandeurs d'emploi de catégories ABC](https://www.insee.fr/fr/statistiques/6473526) (DARES)
 
 ## Organisation du repository
 
