@@ -15,7 +15,7 @@ Administrateurs stagiaires ayant travaillé sur le projet :
 
 ## Organisation du repository
 
-Le dossiers helpers qui contient 3 petits fichiers .py de fonctions d'aides ou pour ne pas encombrer le jupyter rendu. Ce dernier contient l'ensemble des actions du téléchargement, à la visualisation des données jusqu'à leur modélisation et les interprétations.
+Le dossiers helpers qui contient 3 petits fichiers .py de fonctions d'aides pour ne pas encombrer le jupyter rendu. Ce dernier contient l'ensemble des actions du téléchargement, à la visualisation des données jusqu'à leur modélisation et les interprétations.
 
 On a rajouté un fichier requirements.txt en cas de doute sur les besoins en package si le jupyter lui même n'installe pas ce qu'il faut (normalement un bloc installation à été prévu).
 
