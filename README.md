@@ -25,12 +25,13 @@ Par commodité on a supprimé l'essentiel de l'aléa sur le clustering pour faci
 
 
 ## Actions réalisées :
-1. Cleaning et filtration sur la France métropolitaine
-2. Agrégations des bases et éjection d'outliers
-3. Visualisation par des cartes
-4. Clustering sur les pratiques sportives
-5. Prédiction/classification de ces clusters par des données socio-économiques
-6. Interprétations de ces clusters en tant que groupes de distinction culturelle et économiques.
+1. Récupération des bases de données depuis internet par différentes façons (API, package python, lien direct)
+2. Cleaning et filtration sur la France métropolitaine
+3. Agrégations des bases et éjection d'outliers
+4. Visualisation par des cartes
+5. Clustering sur les pratiques sportives
+6. Prédiction/classification de ces clusters par des données socio-économiques
+7. Interprétations de ces clusters en tant que groupes de distinction culturelle et économiques.
     
 ## Pré-critiques
 - On n’a qu’une pratique « officielle », marquée par la licence : on peut rater d’autres pratiques moins formelles  
