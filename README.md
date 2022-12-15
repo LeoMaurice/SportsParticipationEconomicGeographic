@@ -1,4 +1,4 @@
-# Python-data-2A-CMS
+# Examining the Relationship Between Economic and Geographic Factors and Participation in Sports Activities at the City Level.
 
 Projet python réalisé à l'occasion d'un diplôme d'ingénieur à l'ENSAE.
 Administrateurs stagiaires ayant travaillé sur le projet :
