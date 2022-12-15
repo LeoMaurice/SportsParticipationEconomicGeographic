@@ -29,7 +29,7 @@ Par commodité on a supprimé l'essentiel de l'aléa sur le clustering pour faci
 2. Cleaning et filtration des données sur la France métropolitaine
 3. Agrégations des bases et éjection d'outliers
 4. Visualisation par des cartes
-5. Réalisation de statiques descriptives et de corrélations.
+5. Réalisation de statistiques descriptives et de corrélations.
 6. Clustering sur les pratiques sportives
 7. Prédiction/classification de ces clusters par des données socio-économiques
 8. Interprétations de ces clusters en tant que groupes de distinction culturelle et économique.
