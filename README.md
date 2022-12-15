@@ -1,4 +1,4 @@
-# Examining the Relationship Between Economic and Geographic Factors and Participation in Sports Activities at the City Level.
+# Étude de la relation entre les facteurs économiques et géographiques et la participation aux activités sportives au niveau des villes
 
 Projet python réalisé à l'occasion d'un diplôme d'ingénieur à l'ENSAE.
 Administrateurs stagiaires ayant travaillé sur le projet :
